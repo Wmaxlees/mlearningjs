@@ -1,0 +1,25 @@
+{
+  "name": "mlearningjs",
+  "version": "0.0.1",
+  "description": "A machine learning module built in JS",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wmaxlees/mlearningjs.git"
+  },
+  "contributors": [
+    {
+      "name": "Max Lees",
+      "email": "max.lees@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wmaxlees/mlearningjs/issues"
+  },
+  "homepage": "https://github.com/wmaxlees/mlearningjs#readme",
+  "dependencies": {
+    "lodash": "^4.6.1",
+    "vectorious": "^4.3.2"
+  }
+}
