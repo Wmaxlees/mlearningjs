@@ -2,6 +2,9 @@
 
 A machine learning library written in JavaScript.
 
+Note: This package requires cblas to be installed on your system.
+
+For ubuntu, you can use `sudo apt-get install libblas-dev`
 
 #Usage
 
