@@ -8,28 +8,23 @@
 
     const lamda = 0.0001;
 
-    // For use in production
-    function NNLayer (inputSize, outputSize, stepSize, batchSize) {
-        if (!outputSize || !inputSize || !stepSize || !batchSize) {
+    function NNLayer (inputSize, outputSize, gradientStepSize) {
+        if (!outputSize || !inputSize || !gradientStepSize) {
             throw new Error('NNLayer constructor missing arguments');
         }
 
         this.W = Matrix.random(outputSize, inputSize, 0.001);
         this.B = Matrix.random(outputSize, 1, 0.01);
 
-        this.stepSize = stepSize;
-        this.batchSize = batchSize;
+        this.gradientStepSize = gradientStepSize;
     }
     
     module.exports = NNLayer;
 
     NNLayer.prototype = {
         forwardPass: function (input) {
-            if (this.batchSize !== input.shape[1]) {
-                throw new Error('[NNLayer.forwardPass]: Invalid input batch size: ' + input.shape[1]);
-            }
-
             this.x = input;
+
             this.out = Matrix.multiply(this.W, input);
             this.out.each( (x, i, j) => {
                 this.out.set(i, j, x + this.B.get(i, 0));
@@ -47,27 +42,23 @@
             return total*lamda;
         }
 
-        , backwardPass: function(input) {
-            if (this.batchSize !== input.shape[1]) {
-                throw new Error('[NNLayer.backwardPass]: Invalid back batch size: ' + input.shape[1]);
-            }
-
+        , backwardPass: function(input, batchSize) {
             var inputArray = input.transpose().toArray();
             var x = this.x.transpose().toArray();
             var dW = Matrix.zeros(this.W.shape[0], this.W.shape[1]);
-            for (var i = 0; i < this.batchSize; ++i) {
+            for (var i = 0; i < batchSize; ++i) {
                 dW.add(outerProduct(x[i], inputArray[i]));
             }
 
-            dW.scale(this.stepSize/this.batchSize);
+            dW.scale(this.gradientStepSize/batchSize);
             this.W.add(dW);
 
             var averageLoss = new Matrix([averageRows(input.toArray())]);
-            this.B.add(Matrix.scale(averageLoss, this.stepSize).transpose());
+            this.B.add(Matrix.scale(averageLoss, this.gradientStepSize).transpose());
 
             return Matrix.multiply(this.W.transpose(), input);
 
-            this.stepSize -= this.stepSize * 0.001;
+            this.gradientStepSize -= this.gradientStepSize * 0.001;
         }
 
         , toConsole: function () {
@@ -91,23 +82,4 @@
 
         return input;
     }
-
-    // function averageCols (input) {
-    //     var result = [];
-
-    //     for (var row = 0; row < input.length; ++row) {
-    //         for (var col = 0; col < input[row].length; ++col) {
-    //             if (!result[col]) {
-    //                 result[col] = [0];
-    //             }
-    //             result[col][0] += input[row][col];
-    //         }
-    //     }
-
-    //     for (var i in result) {
-    //         result[i] /= input[0].length;
-    //     }
-
-    //     return result;
-    // }
 }

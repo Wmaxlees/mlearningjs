@@ -4,22 +4,13 @@
     var v = require('vectorious')
         , Matrix = v.Matrix;
 
-    function SoftmaxLayer (batchSize) {
-        if (!batchSize) {
-            throw Error('SoftmaxLayer constructor missing arguments');
-        }
-
-        this.batchSize = batchSize;
-    }
+    function SoftmaxLayer () {}
 
     module.exports = SoftmaxLayer;
 
     SoftmaxLayer.prototype = {
         forwardPass: function (input) {
             var shape = input.shape;
-            if (this.batchSize !== shape[1]) {
-                throw new Error('[SoftmaxLayer.forwardPass]: Invalid input batch size: ' + shape[1]);
-            }
 
             var result = input.toArray();
             var denom = [];
@@ -48,15 +39,11 @@
             return this.out;
         }
 
-        , backwardPass: function (input) {
-            var shape = input.shape;
-            if (this.batchSize !== shape[1]) {
-                throw new Error('[SoftmaxLayer.backwardPass]: Invalid input batch size: ' + shape[1]);
-            }
-
+        , backwardPass: function (input, batchSize) {
             var result = [];
+            var shape = input.shape;
 
-            for (var layer = 0; layer < this.batchSize; ++layer) {
+            for (var layer = 0; layer < batchSize; ++layer) {
                 var dLayer = Matrix.zeros(shape[0], shape[0]);
                 for (var i = 0; i < shape[0]; ++i) {
                     for (var j = 0; j < shape[0]; ++j) {
